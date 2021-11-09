@@ -1,24 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import { createContext, useState } from "react";
+import { Route, Routes } from "react-router";
+import "./App.css";
+import Home from "./components/Home/Home";
+import Login from "./components/Login/Login";
+import SignUp from "./components/Signup/SignUp";
+import Destination from "./components/Destination/Destination";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
+import { firebase } from "./firebase.config";
+
+export const UserContext = createContext();
 
 function App() {
+  const [loggedInUser, setLoggedInUser] = useState({
+    isSignedIn: false,
+    name: "",
+    email: "",
+    password: "",
+    error: "",
+    message: "",
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route
+            path="/destination/:name"
+            element={
+              <PrivateRoute>
+                <Destination />{" "}
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/Signup" element={<SignUp />} />
+          <Route path="/*" element={<h1> Error</h1>} />
+        </Routes>
+      </div>
+    </UserContext.Provider>
   );
 }
 
